@@ -21,6 +21,7 @@ The goal is to deliver a ready-to-run entry point with minimal setup effort.
 Run the following command in the project root directory:
 
 ```bash
+cd disuko
 ./setup-dev.sh   # Windows: setup-dev.ps1
 ```
 
