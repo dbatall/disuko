@@ -5,7 +5,7 @@ import {getChildren} from './util';
 export default defineConfig({
   title: 'DISUKO',
   description: 'A digital solution replacing manual and paper-based workflows',
-  base: '/docs/',
+  base: '/disuko/docs/',
   themeConfig: {
     nav: [
       {text: 'Home', link: '/'},
