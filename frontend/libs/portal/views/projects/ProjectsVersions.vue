@@ -112,11 +112,7 @@ const reload = async () => {
   if (!versionDetails.value || versionDetails.value._key !== versionKey.value) {
     const vd = currentProject.value?.versions[versionKey.value] ?? '';
     sbomStore.setCurrentVersion(vd);
-    const spdxFileHistory = (await versionService.getSbomHistory(projectId.value, versionKey.value)).data;
-    if (spdxFileHistory[0]) {
-      spdxFileHistory[0].isRecent = true;
-    }
-    sbomStore.setChannelSpdxs(spdxFileHistory);
+    await sbomStore.fetchSBOMHistory();
   }
   let selectedByRoute = false;
   if (spdxKey.value) {
@@ -144,7 +140,6 @@ const initPage = async () => {
 
 const editVersion = () => {
   const config = {
-    projectID: currentProject.value?._key,
     version: versionDetails.value,
   } as unknown as DialogVersionFormConfig;
   (editDlg.value as any)?.open(config);
@@ -181,13 +176,7 @@ const initBreadcrumbs = () => {
   breadcrumbs.setCurrentBreadcrumbs(breadCrumb);
 };
 const showOverallReviewDialog = () => {
-  (reviewDia.value as any)?.open(
-    currentProject.value?._key,
-    versionKey.value,
-    spdxFileHistory.value,
-    currentSpdx.value,
-    currentProject.value?.approvablespdx.spdxkey,
-  );
+  (reviewDia.value as any)?.open();
 };
 const showDeletionConfirmationDialog = async () => {
   await versionService.getApprovalOrReviewUsage(projectId.value, versionKey.value).then((r) => {
@@ -498,12 +487,7 @@ onUnmounted(() => {
         </v-tabs-window>
       </v-card>
     </div>
-    <VersionDialogForm
-      ref="editDlg"
-      :version="versionDetails"
-      :title="t('NPV_DIALOG_EDIT_TITLE')"
-      :item="versionDetails"
-      :confirm-text="t('NP_DIALOG_BTN_EDIT')"></VersionDialogForm>
+    <VersionDialogForm ref="editDlg"></VersionDialogForm>
     <ConfirmationDialog
       v-model:showDialog="confirmVisible"
       :config="confirmConfig"

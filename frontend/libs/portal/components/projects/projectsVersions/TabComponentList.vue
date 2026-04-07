@@ -255,9 +255,6 @@ const showDetails = async (item: TabelItem) => {
 
   if (newComponentDetailsDlg.value) {
     newComponentDetailsDlg.value?.open(
-      projectModel.value,
-      versionDetails.value._key,
-      currentSpdx.value._key,
       response.data,
       item.policyRuleStatus,
       item.unmatchedLicenses,

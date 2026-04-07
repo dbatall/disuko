@@ -14,6 +14,7 @@ import {LicenseMeta, ReviewRemark, ReviewRemarkStatus, compareRRLevel} from '@di
 import {ComponentInfoSlim, PolicyRuleStatus} from '@disclosure-portal/model/VersionDetails';
 import versionService from '@disclosure-portal/services/version';
 import {useProjectStore} from '@disclosure-portal/stores/project.store';
+import {useSbomStore} from '@disclosure-portal/stores/sbom.store';
 import {useUserStore} from '@disclosure-portal/stores/user';
 import {
   getIconColorForPolicyType,
@@ -40,6 +41,8 @@ interface LocalComponentDetails extends ComponentDetails {
 const emit = defineEmits(['reloadAfterCreation', 'triggerBulk']);
 
 const userStore = useUserStore();
+const projectStore = useProjectStore();
+const sbomStore = useSbomStore();
 const snack = useSnackbar();
 const {t} = useI18n();
 
@@ -104,7 +107,7 @@ const viewRemarkDialog = ref();
 const reviewRemarks = ref<ReviewRemark[]>([]);
 const loadingRemarks = ref(false);
 
-const isDeprecated = computed(() => useProjectStore().currentProject!.isDeprecated);
+const isDeprecated = computed(() => projectStore.currentProject!.isDeprecated);
 
 const fetchReviewRemarks = async (projectKey: string, versionKey: string, sbomUuid: string, spdxId: string) => {
   loadingRemarks.value = true;
@@ -120,15 +123,16 @@ const fetchReviewRemarks = async (projectKey: string, versionKey: string, sbomUu
 };
 
 const open = async (
-  projectData: ProjectModel,
-  versionKey: string,
-  sbomIdData: string,
   data: ComponentDetails,
   policyStatus?: PolicyRuleStatus[],
   unmatched?: UnmatchedLicense[],
   policyDecisionsApplied?: PolicyDecisionSlim[],
   policyDecisionDeniedReason?: string,
 ) => {
+  const projectData = projectStore.currentProject!;
+  const versionKey = sbomStore.getCurrentVersion._key;
+  const sbomIdData = sbomStore.getSelectedSpdx._key;
+
   responsible.value = userStore.getProfile.user === projectData.responsible;
   details.value = data;
 
