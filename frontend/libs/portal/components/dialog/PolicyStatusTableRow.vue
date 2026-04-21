@@ -28,6 +28,7 @@ interface Props {
   responsible: boolean;
   isDeprecated: boolean;
   isUnmatched?: boolean;
+  isRecommended: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -181,6 +182,7 @@ const isDeniedPolicyDecisionDisabled = computed(
     props.details.PolicyDecisionDeniedReason === 'DECISION_DENIED_COMPONENT_VERSION_NOT_SET' ||
     !!getPolicy()?.deniedDecisionDeniedReason,
 );
+
 const deniedPolicyDecisionTooltip = computed(() => {
   if (!isDeniedPolicyDecisionDisabled.value) {
     return t('TT_denied_policy_decision');
@@ -325,6 +327,9 @@ const getActionButtons = computed((): TableActionButtonsProps['buttons'] => {
         </tooltip>
         &nbsp;
       </span>
+      <v-chip v-if="isRecommended" variant="outlined" label size="x-small" class="mr-1 font-bold">
+        {{ t('RECOMMENDED') }}
+      </v-chip>
       <DInternalLink
         v-if="shouldShowInternalLink()"
         :text="getInternalLinkText()"
